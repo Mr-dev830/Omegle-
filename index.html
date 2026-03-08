@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OtakuTalk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0b1020;
+      --bg-card: rgba(20, 27, 48, 0.82);
+      --bg-chat: rgba(8, 13, 28, 0.92);
+      --text-main: #f8fafc;
+      --text-soft: #cbd5e1;
+      --accent-1: #ff4fd8;
+      --accent-2: #7c5cff;
+      --accent-3: #38bdf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --bubble-you: linear-gradient(135deg, #ff4fd8, #7c5cff);
+      --bubble-stranger: rgba(61, 73, 112, 0.95);
+      --bubble-system: linear-gradient(135deg, #2563eb, #7c3aed);
+      --border-glow: rgba(255, 255, 255, 0.08);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(255, 79, 216, 0.18), transparent 25%),
+        radial-gradient(circle at bottom center, rgba(56, 189, 248, 0.15), transparent 30%),
+        linear-gradient(160deg, #050816, #0b1020 45%, #11162a);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 0;
+      opacity: 0.5;
+      animation: floatBlob 8s ease-in-out infinite;
+    }
+
+    body::before {
+      background: rgba(255, 79, 216, 0.22);
+      top: 8%;
+      left: -60px;
+    }
+
+    body::after {
+      background: rgba(124, 92, 255, 0.22);
+      bottom: 6%;
+      right: -60px;
+      animation-delay: 2s;
+    }
+
+    @keyframes floatBlob {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-18px) scale(1.04); }
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      min-height: 720px;
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-glow);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.03), transparent 35%),
+        linear-gradient(300deg, rgba(255,255,255,0.02), transparent 30%);
+      pointer-events: none;
+    }
+
+    .header {
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(90deg, rgba(124, 92, 255, 0.15), rgba(255, 79, 216, 0.12));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: "Orbitron", sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(124, 92, 255, 0.8);
+    }
+
+    .status-pill {
+      font-size: 12px;
+      color: #e2e8f0;
+      background: rgba(255,255,255,0.08);
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .screen {
+      display: none;
+      padding: 22px;
+      height: calc(720px - 72px);
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home {
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      align-self: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 79, 216, 0.12);
+      border: 1px solid rgba(255, 79, 216, 0.25);
+      color: #f9a8d4;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+    }
+
+    .home h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 32px;
+      line-height: 1.2;
+      text-shadow: 0 0 18px rgba(124, 92, 255, 0.35);
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #ff7adf, #8b7dff, #67e8f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .home p {
+      color: var(--text-soft);
+      line-height: 1.7;
+      font-size: 15px;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .feature {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 14px 12px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      color: white;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 10px 25px rgba(124, 92, 255, 0.35);
+    }
+
+    .secondary-btn {
+      background: linear-gradient(135deg, #334155, #475569);
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .chat-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .chat-title {
+      font-family: "Orbitron", sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      color: #f8fafc;
+    }
+
+    .chat-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg-chat);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.25);
+      scroll-behavior: smooth;
+    }
+
+    .chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 11px 14px;
+      border-radius: 18px;
+      line-height: 1.45;
+      word-wrap: break-word;
+      font-size: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+    }
+
+    .you {
+      align-self: flex-end;
+      background: var(--bubble-you);
+      border-bottom-right-radius: 6px;
+    }
+
+    .stranger {
+      align-self: flex-start;
+      background: var(--bubble-stranger);
+      border-bottom-left-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .system {
+      align-self: center;
+      background: var(--bubble-system);
+      font-size: 12px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .input-wrap {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .input-area input::placeholder {
+      color: #94a3b8;
+    }
+
+    .chat-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #06b6d4, #7c3aed);
+      box-shadow: 0 10px 25px rgba(6, 182, 212, 0.22);
+      min-width: 88px;
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 540px) {
+      body {
+        padding: 10px;
+      }
+
+      .app {
+        max-width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+      }
+
+      .screen {
+        height: calc(100vh - 72px);
+        padding: 18px;
+      }
+
+      .home h1 {
+        font-size: 28px;
+      }
+
+      .feature-list {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .message {
+        max-width: 86%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="logo">OtakuTalk</div>
+      <div class="status-pill">Anime Vibes Online ✦</div>
+    </div>
+
+    <div id="homeScreen" class="screen active home">
+      <div class="badge">匿名 chat • anime aesthetic • mobile first</div>
+
+      <h1>
+        Meet a <span class="gradient-text">random stranger</span><br />
+        in anime style
+      </h1>
+
+      <p>
+        A neon-inspired anonymous chat experience for anime lovers, manga readers,
+        and late-night otaku conversations.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature">🌸 Anonymous one-on-one chat</div>
+        <div class="feature">⚡ Fast mobile-friendly UI</div>
+        <div class="feature">🎴 Anime-inspired neon theme</div>
+        <div class="feature">💬 Instant chat experience</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="startBtn" class="primary-btn">Start Chat ✦</button>
+      </div>
+
+      <div class="footer-note">No login in this MVP. Pure frontend demo for now.</div>
+    </div>
+
+    <div id="chatScreen" class="screen">
+      <div class="chat-topbar">
+        <div>
+          <div class="chat-title">Private Chat Room</div>
+          <div class="chat-sub">Connected with a stranger</div>
+        </div>
+        <div class="status-pill">Live Session</div>
+      </div>
+
+      <div id="chatBox" class="chat-box"></div>
+
+      <div class="input-wrap">
+        <div class="input-area">
+          <input type="text" id="messageInput" placeholder="Type your message..." />
+          <button id="sendBtn" class="send-btn">Send</button>
+        </div>
+
+        <div class="chat-actions">
+          <button id="nextBtn" class="secondary-btn">Next Stranger</button>
+          <button id="stopBtn" class="danger-btn">Stop Chat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const homeScreen = document.getElementById("homeScreen");
+    const chatScreen = document.getElementById("chatScreen");
+    const startBtn = document.getElementById("startBtn");
+    const sendBtn = document.getElementById("sendBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const messageInput = document.getElementById("messageInput");
+    const chatBox = document.getElementById("chatBox");
+
+    let connected = false;
+
+    function addMessage(text, type) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", type);
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function startChat() {
+      homeScreen.classList.remove("active");
+      chatScreen.classList.add("active");
+      chatBox.innerHTML = "";
+      connected = true;
+
+      addMessage("Searching for an anime-loving stranger...", "system");
+
+      setTimeout(() => {
+        addMessage("Connected. Say hi to your stranger ✨", "system");
+      }, 1200);
+    }
+
+    function stopChat() {
+      connected = false;
+      chatScreen.classList.remove("active");
+      homeScreen.classList.add("active");
+      chatBox.innerHTML = "";
+      messageInput.value = "";
+    }
+
+    function nextStranger() {
+      if (!connected) return;
+
+      chatBox.innerHTML = "";
+      addMessage("Skipping... finding a new stranger 🌙", "system");
+
+      setTimeout(() => {
+        addMessage("Connected to a new stranger ✦", "system");
+      }, 1000);
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text || !connected) return;
+
+      addMessage(text, "you");
+      messageInput.value = "";
+
+      setTimeout(() => {
+        const replies = [
+          "Hey, what anime do you watch?",
+          "That sounds interesting ✨",
+          "Manga or anime?",
+          "Who is your favorite character?",
+          "Nice taste 😌",
+          "Tell me more.",
+          "Have you watched any recent series?",
+          "That gives main character energy."
+        ];
+
+        const randomReply = replies[Math.floor(Math.random() * replies.length)];
+        addMessage(randomReply, "stranger");
+      }, 800);
+    }
+
+    startBtn.addEventListener("click", startChat);
+    stopBtn.addEventListener("click", stopChat);
+    nextBtn.addEventListener("click", nextStranger);
+    sendBtn.addEventListener("click", sendMessage);
+
+    messageInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
